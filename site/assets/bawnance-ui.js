@@ -79,17 +79,22 @@
     return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value || '');
   }
 
+  function isTba(value) {
+    return String(value || '').toLowerCase() === 'tba';
+  }
+
   function renderContractAddress(address) {
-    liveContractAddress = isValidSolanaAddress(address) ? address : '';
+    liveContractAddress = isValidSolanaAddress(address) || isTba(address) ? address : '';
     document.querySelectorAll('.bawnance-ca-box').forEach(function (box) {
       var value = box.querySelector('.bawnance-ca-value');
       if (value) value.textContent = liveContractAddress || 'UPDATING SOON';
-      box.dataset.copyable = liveContractAddress ? 'true' : 'false';
-      box.title = liveContractAddress ? 'Click to copy contract address' : 'Contract address will appear here';
+      var copyable = isValidSolanaAddress(liveContractAddress);
+      box.dataset.copyable = copyable ? 'true' : 'false';
+      box.title = copyable ? 'Click to copy contract address' : 'Contract address will appear here';
       if (box.dataset.copyInstalled === 'true') return;
       box.dataset.copyInstalled = 'true';
       box.addEventListener('click', function () {
-        if (!liveContractAddress || !navigator.clipboard) return;
+        if (!isValidSolanaAddress(liveContractAddress) || !navigator.clipboard) return;
         navigator.clipboard.writeText(liveContractAddress).then(function () {
           var label = box.querySelector('.bawnance-ca-label');
           if (!label) return;

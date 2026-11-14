@@ -2,6 +2,7 @@ create table if not exists public.site_config (
   id text primary key,
   contract_address text null check (
     contract_address is null
+    or lower(contract_address) = 'tba'
     or contract_address ~ '^[1-9A-HJ-NP-Za-km-z]{32,44}$'
   ),
   updated_at timestamptz not null default now()
