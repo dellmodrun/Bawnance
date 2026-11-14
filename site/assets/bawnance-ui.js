@@ -3,6 +3,8 @@
 
   var CONTRACT_ADDRESS = '';
   var X_URL = 'https://x.com/bawnancefun';
+  var walletAddress = '';
+  var walletListenersInstalled = false;
   var FAQ_ANSWERS = {
     'Do I actually own the asset?': 'You own shares recorded on this site against your wallet address, plus a Solana transaction as the receipt. These are not NFTs and they carry no claim on anything in the real world — this is a fan-made game built on Vice City.',
     'What happens when a supply sells out?': 'The exchange stops issuing it. After that the only way in is a listing from somebody who already holds shares, at whatever price they choose.',
@@ -94,10 +96,97 @@
     });
   }
 
+  function getWalletProvider() {
+    return (window.phantom && window.phantom.solana) || window.solflare || window.solana || null;
+  }
+
+  function shortAddress(address) {
+    return address.slice(0, 4) + '…' + address.slice(-4);
+  }
+
+  function setWalletButtons(label, connected) {
+    document.querySelectorAll('[data-bawnance-wallet]').forEach(function (button) {
+      var isHeaderButton = !!button.closest('header');
+      var nextLabel = connected ? (isHeaderButton ? shortAddress(label) : 'Wallet connected') : 'Connect wallet';
+      if (button.textContent !== nextLabel) button.textContent = nextLabel;
+      button.title = connected && isHeaderButton ? 'Disconnect wallet' : 'Connect a Solana wallet';
+      button.setAttribute('aria-label', button.title);
+    });
+  }
+
+  async function connectWallet(button) {
+    var provider = getWalletProvider();
+    if (!provider || typeof provider.connect !== 'function') {
+      window.open('https://phantom.app/', '_blank', 'noopener,noreferrer');
+      button.textContent = 'Install Phantom';
+      window.setTimeout(function () { if (!walletAddress) button.textContent = 'Connect wallet'; }, 1800);
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = 'Connecting…';
+    try {
+      var response = await provider.connect();
+      var publicKey = (response && response.publicKey) || provider.publicKey;
+      walletAddress = publicKey && publicKey.toString ? publicKey.toString() : String(publicKey || '');
+      if (!walletAddress) throw new Error('Wallet did not return an address');
+      setWalletButtons(walletAddress, true);
+    } catch (error) {
+      button.textContent = 'Connection cancelled';
+      button.title = error && error.message ? error.message : 'Wallet connection failed';
+      window.setTimeout(function () { if (!walletAddress) button.textContent = 'Connect wallet'; }, 1800);
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  async function disconnectWallet() {
+    var provider = getWalletProvider();
+    try {
+      if (provider && typeof provider.disconnect === 'function') await provider.disconnect();
+    } catch {}
+    walletAddress = '';
+    setWalletButtons('', false);
+  }
+
+  function installWalletButtons() {
+    document.querySelectorAll('button').forEach(function (button) {
+      if (button.dataset.bawnanceWallet === 'ready' || !/^Connect wallet/i.test(button.textContent.trim())) return;
+      button.dataset.bawnanceWallet = 'ready';
+      button.addEventListener('click', function () {
+        if (walletAddress && button.closest('header')) disconnectWallet();
+        else if (!walletAddress) connectWallet(button);
+      });
+    });
+
+    var provider = getWalletProvider();
+    if (provider && !walletListenersInstalled) {
+      walletListenersInstalled = true;
+      if (typeof provider.on === 'function') {
+        provider.on('accountChanged', function (publicKey) {
+          walletAddress = publicKey && publicKey.toString ? publicKey.toString() : '';
+          setWalletButtons(walletAddress, !!walletAddress);
+        });
+        provider.on('disconnect', function () {
+          walletAddress = '';
+          setWalletButtons('', false);
+        });
+      }
+      if (typeof provider.connect === 'function') {
+        provider.connect({ onlyIfTrusted: true }).then(function (response) {
+          var publicKey = (response && response.publicKey) || provider.publicKey;
+          walletAddress = publicKey && publicKey.toString ? publicKey.toString() : '';
+          if (walletAddress) setWalletButtons(walletAddress, true);
+        }).catch(function () {});
+      }
+    }
+  }
+
   function scheduleInstall() {
     ensureFavicons();
     window.requestAnimationFrame(installTopActions);
     window.requestAnimationFrame(installFaq);
+    window.requestAnimationFrame(installWalletButtons);
   }
 
   if (document.readyState === 'loading') {
@@ -107,5 +196,6 @@
   }
 
   window.setTimeout(installTopActions, 800);
+  window.setTimeout(installWalletButtons, 800);
   new MutationObserver(scheduleInstall).observe(document.documentElement, { childList: true, subtree: true });
 }());
