@@ -4,7 +4,7 @@ import path from 'node:path';
 const root = path.resolve(import.meta.dirname, '..');
 const source = path.join(root, 'site');
 const output = path.join(root, 'pages-dist');
-const base = '/Bawnance';
+const base = '';
 
 await rm(output, { recursive: true, force: true });
 await cp(source, output, { recursive: true });
