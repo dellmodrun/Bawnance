@@ -5,6 +5,8 @@ original-*.png
 preview-*.png
 qa-*.png
 qa-*.json
+pages-live-qa.png
+qa-pages-temp.mjs
 origin-inspection.json
 stock-api-response.bin
 stock-api-response.json

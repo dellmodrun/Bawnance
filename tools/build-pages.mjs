@@ -22,5 +22,9 @@ for (const route of manifest.routes) {
   await writeFile(file, html, 'utf8');
 }
 
+const fontCssFile = path.join(output, 'local', 'google-fonts.css');
+const fontCss = (await readFile(fontCssFile, 'utf8')).replaceAll('url(/local/', `url(${base}/local/`);
+await writeFile(fontCssFile, fontCss, 'utf8');
+
 await writeFile(path.join(output, '.nojekyll'), '');
 console.log(`GitHub Pages bundle created at ${output}`);
