@@ -59,6 +59,8 @@ header nav a.bg-background { background: #0c0810; color: #ffd43b; }
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  padding-right: .2em;
+  overflow: visible;
 }
 
 header .font-logo { display: inline-flex; align-items: center; }
