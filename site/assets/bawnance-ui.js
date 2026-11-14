@@ -3,6 +3,13 @@
 
   var CONTRACT_ADDRESS = '';
   var X_URL = 'https://x.com/bawnancefun';
+  var FAQ_ANSWERS = {
+    'Do I actually own the asset?': 'You own shares recorded on this site against your wallet address, plus a Solana transaction as the receipt. These are not NFTs and they carry no claim on anything in the real world — this is a fan-made game built on Vice City.',
+    'What happens when a supply sells out?': 'The exchange stops issuing it. After that the only way in is a listing from somebody who already holds shares, at whatever price they choose.',
+    'Why do prices show in dollars if I pay in SOL?': 'So you can read a price without doing maths. The dollar figure is the live SOL rate applied to the SOL price, refreshed every minute. The amount you actually approve in your wallet is always SOL.',
+    'Can I lose money?': 'Yes. Prices only move when people trade, so if nobody buys after you, your shares sit there at the price the last buyer paid. There is no buyback from the exchange — you exit by selling to another player.',
+    'Are payments reversible?': 'No. SOL sent on mainnet is final the moment it confirms. If a payment lands but the trade fails, keep the transaction receipt so the payment can be traced.'
+  };
 
   function isHomePage() {
     return /\/(?:Bawnance\/?)?$/.test(window.location.pathname);
@@ -61,9 +68,36 @@
     masthead.insertBefore(actions, walletButton || null);
   }
 
+  function installFaq() {
+    if (window.location.pathname.indexOf('/Bawnance/how-it-works') !== 0) return;
+
+    document.querySelectorAll('button[data-radix-collection-item]').forEach(function (button) {
+      if (button.dataset.bawnanceFaq === 'ready') return;
+      var question = button.textContent.trim();
+      var answer = FAQ_ANSWERS[question];
+      var item = button.closest('div[data-state]');
+      var region = item && item.querySelector('[role="region"]');
+      if (!answer || !region) return;
+
+      region.innerHTML = '<div class="pb-4 leading-relaxed text-muted-foreground">' + answer + '</div>';
+      button.dataset.bawnanceFaq = 'ready';
+      button.addEventListener('click', function () {
+        var opening = button.getAttribute('aria-expanded') !== 'true';
+        button.setAttribute('aria-expanded', String(opening));
+        button.setAttribute('data-state', opening ? 'open' : 'closed');
+        item.setAttribute('data-state', opening ? 'open' : 'closed');
+        var heading = button.parentElement;
+        if (heading) heading.setAttribute('data-state', opening ? 'open' : 'closed');
+        region.setAttribute('data-state', opening ? 'open' : 'closed');
+        region.hidden = !opening;
+      });
+    });
+  }
+
   function scheduleInstall() {
     ensureFavicons();
     window.requestAnimationFrame(installTopActions);
+    window.requestAnimationFrame(installFaq);
   }
 
   if (document.readyState === 'loading') {
