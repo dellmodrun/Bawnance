@@ -100,6 +100,23 @@
     });
   }
 
+  async function fetchContractAddressDirect() {
+    try {
+      var response = await fetch(SUPABASE_URL + '/rest/v1/site_config?id=eq.bawnance&select=contract_address', {
+        headers: {
+          apikey: SUPABASE_PUBLISHABLE_KEY,
+          accept: 'application/json'
+        },
+        cache: 'no-store'
+      });
+      if (!response.ok) throw new Error('CA request returned ' + response.status);
+      var rows = await response.json();
+      if (rows && rows[0]) renderContractAddress(rows[0].contract_address || '');
+    } catch (error) {
+      console.warn('Bawnance CA could not be refreshed.', error);
+    }
+  }
+
   function loadSupabase() {
     if (window.supabase && window.supabase.createClient) return Promise.resolve(window.supabase);
     return new Promise(function (resolve, reject) {
@@ -110,7 +127,8 @@
         return;
       }
       var script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      var base = window.location.pathname.indexOf('/Bawnance') === 0 ? '/Bawnance' : '';
+      script.src = base + '/assets/supabase-js.min.js?v=1';
       script.async = true;
       script.dataset.bawnanceSupabase = 'true';
       script.onload = function () { resolve(window.supabase); };
@@ -122,22 +140,13 @@
   async function installLiveCa() {
     if (!isHomePage() || liveCaInstalled) return;
     liveCaInstalled = true;
+    fetchContractAddressDirect();
     try {
       var library = await loadSupabase();
       liveCaClient = library.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
         auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
       });
 
-      async function refreshContractAddress() {
-        var response = await liveCaClient
-          .from('site_config')
-          .select('contract_address')
-          .eq('id', 'bawnance')
-          .maybeSingle();
-        if (!response.error && response.data) renderContractAddress(response.data.contract_address || '');
-      }
-
-      await refreshContractAddress();
       liveCaClient
         .channel('bawnance-ca-live')
         .on('postgres_changes', {
@@ -150,8 +159,8 @@
         })
         .subscribe();
 
-      window.addEventListener('focus', refreshContractAddress);
-      window.setInterval(refreshContractAddress, 30000);
+      window.addEventListener('focus', fetchContractAddressDirect);
+      window.setInterval(fetchContractAddressDirect, 30000);
     } catch (error) {
       console.warn('Bawnance live CA is temporarily unavailable.', error);
     }
@@ -282,6 +291,8 @@
   } else {
     scheduleInstall();
   }
+
+  if (isHomePage()) fetchContractAddressDirect();
 
   window.setTimeout(installTopActions, 800);
   window.setTimeout(installWalletButtons, 800);
