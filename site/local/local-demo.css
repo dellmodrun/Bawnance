@@ -1,0 +1,29 @@
+:root { --local-demo: #ffdc47; }
+body::before {
+  content: "LOCAL DEMO · 钱包与真实交易已停用";
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+  padding: 7px 16px;
+  background: var(--local-demo);
+  color: #161616;
+  border-bottom: 2px solid #161616;
+  font: 700 12px/1.2 "JetBrains Mono", Consolas, monospace;
+  letter-spacing: .08em;
+  text-align: center;
+}
+.local-demo-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 10000;
+  transform: translateX(-50%);
+  max-width: min(92vw, 560px);
+  padding: 14px 18px;
+  background: #161616;
+  color: #fff;
+  border: 2px solid var(--local-demo);
+  box-shadow: 6px 6px 0 rgba(0,0,0,.28);
+  font: 600 14px/1.5 Arial, sans-serif;
+}

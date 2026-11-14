@@ -1,0 +1,41 @@
+import { chromium } from '../../onemod/node_modules/playwright/index.mjs';
+import { writeFile } from 'node:fs/promises';
+import path from 'node:path';
+
+const root = path.resolve(import.meta.dirname, '..');
+const browser = await chromium.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true });
+const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+const page = await context.newPage();
+const failures = [];
+const remoteBrowserRequests = [];
+const consoleMessages = [];
+const pageErrors = [];
+const badResponses = [];
+const serverFnHeaders = [];
+page.on('requestfailed', (request) => failures.push(`${request.url()} :: ${request.failure()?.errorText}`));
+page.on('console', (message) => consoleMessages.push(`${message.type()}: ${message.text()}`));
+page.on('pageerror', (error) => pageErrors.push(error.stack || error.message));
+page.on('response', (response) => { if (response.status() >= 400) badResponses.push(`${response.status()} ${response.url()}`); });
+page.on('request', (request) => {
+  const url = new URL(request.url());
+  if (url.pathname.startsWith('/_serverFn/')) serverFnHeaders.push(request.headers());
+  if (!['127.0.0.1', 'localhost'].includes(url.hostname)) remoteBrowserRequests.push(request.url());
+});
+
+await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded', timeout: 30000 });
+await page.screenshot({ path: path.join(root, 'qa-intro-start.png') });
+await page.waitForTimeout(1600);
+const videoAt1600 = await page.locator('video').count() ? await page.locator('video').evaluate((video) => ({ src: video.currentSrc, readyState: video.readyState, currentTime: video.currentTime, paused: video.paused })) : null;
+await page.screenshot({ path: path.join(root, 'qa-intro-playing.png') });
+await page.waitForTimeout(1200);
+const videoAt2800 = await page.locator('video').count() ? await page.locator('video').evaluate((video) => ({ src: video.currentSrc, readyState: video.readyState, currentTime: video.currentTime, paused: video.paused })) : null;
+await page.screenshot({ path: path.join(root, 'qa-intro-title.png') });
+const enterButton = page.getByRole('button', { name: /Enter the exchange/i });
+if (await enterButton.count()) await enterButton.click();
+await page.waitForTimeout(1000);
+await page.screenshot({ path: path.join(root, 'qa-market.png'), fullPage: true });
+const market = page.getByText('Market overview');
+const report = { videoAt1600, videoAt2800, failures, badResponses, serverFnHeaders, consoleMessages, pageErrors, remoteBrowserRequests: [...new Set(remoteBrowserRequests)], marketVisible: await market.count() ? await market.first().isVisible() : false };
+await writeFile(path.join(root, 'qa-local-report.json'), JSON.stringify(report, null, 2));
+console.log(JSON.stringify(report, null, 2));
+await browser.close();

@@ -1,0 +1,1 @@
+import{H as e}from"./config-BAIz1BmW.js";var t=e();function n({title:e,sub:n}){return(0,t.jsxs)(`div`,{className:`mb-8`,children:[(0,t.jsx)(`div`,{className:`mb-3 h-1 w-24 bg-stripe`}),(0,t.jsx)(`h1`,{className:`font-heading text-5xl text-sunset md:text-7xl`,children:e}),(0,t.jsx)(`p`,{className:`mt-2 max-w-2xl text-muted-foreground`,children:n})]})}export{n as t};

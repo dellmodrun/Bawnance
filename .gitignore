@@ -1,0 +1,13 @@
+node_modules/
+pages-dist/
+origin-*.png
+original-*.png
+preview-*.png
+qa-*.png
+qa-*.json
+origin-inspection.json
+stock-api-response.bin
+stock-api-response.json
+server.log
+server-error.log
+*.download
