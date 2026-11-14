@@ -1,10 +1,10 @@
 {
-  "name": "vicecitymarkets-local",
+  "name": "bawnance",
   "version": "1.0.0",
   "private": true,
-  "description": "Offline-safe local mirror of the public Vice City Markets frontend",
+  "description": "Bawnance frontend with a sunset-neon brand theme, local runtime and GitHub Pages deployment",
   "scripts": {
-    "refresh": "node tools/mirror-full.mjs",
+    "refresh": "node tools/mirror-full.mjs && node tools/rebrand-bawnance.mjs",
     "start": "node tools/server.mjs",
     "check": "node tools/check.mjs",
     "qa": "node tools/qa-local.mjs",

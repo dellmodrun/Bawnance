@@ -1,4 +1,4 @@
-# Vice City Markets 本地前端
+# Bawnance 本地前端
 
 这是 `https://vicecitymarkets.fun/` 前端的完整本地部署包，包含原站开场视频动画、首页、全部分类与详情路由、原始前端代码、图片和字体。
 

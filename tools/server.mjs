@@ -78,5 +78,5 @@ http.createServer(async (req, res) => {
     res.end('404 - Page not found');
   }
 }).listen(port, '127.0.0.1', () => {
-  console.log(`Vice City Markets local is running at http://127.0.0.1:${port}`);
+  console.log(`Bawnance local is running at http://127.0.0.1:${port}`);
 });

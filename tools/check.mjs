@@ -19,7 +19,7 @@ for (const route of manifest.routes) {
   }
 }
 
-for (const file of ['assets/index-Doa9XxR5.js', 'assets/routes-CmbTlaT2.js', 'assets/styles-BvLcAyGw.css', 'assets/vice-city-hero-DHvS_FUQ.jpg', '__l5e/events.270c78a44fc53e7b.js', '__l5e/assets-v1/905c123b-ce33-4695-975f-ff781b06d3d9/intro-vice-city.mp4', 'local/google-fonts.css']) {
+for (const file of ['assets/index-Doa9XxR5.js', 'assets/routes-CmbTlaT2.js', 'assets/styles-BvLcAyGw.css', 'assets/bawnance-theme.css', 'assets/bawnance-logo.png', 'assets/vice-city-hero-DHvS_FUQ.jpg', '__l5e/events.270c78a44fc53e7b.js', '__l5e/assets-v1/905c123b-ce33-4695-975f-ff781b06d3d9/intro-vice-city.mp4', 'local/google-fonts.css']) {
   localRefs.add(`/${file}`);
 }
 
