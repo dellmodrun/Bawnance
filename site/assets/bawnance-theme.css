@@ -70,7 +70,7 @@ header .font-logo::before {
   height: 38px;
   margin-right: 10px;
   flex: 0 0 auto;
-  background: url("./bawnance-logo.png") center / contain no-repeat;
+  background: url("./bawnance-logo.png?v=3") center / contain no-repeat;
 }
 
 #bawsaq-intro .font-logo::before,
@@ -80,7 +80,7 @@ main .fixed.z-\[100\] .font-logo::before {
   width: 118px;
   height: 118px;
   margin: 0 auto 14px;
-  background: url("./bawnance-logo.png") center / contain no-repeat;
+  background: url("./bawnance-logo.png?v=3") center / contain no-repeat;
 }
 
 .bg-card { background-color: rgba(18, 13, 24, .92); }

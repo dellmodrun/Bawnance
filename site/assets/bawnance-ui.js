@@ -10,7 +10,7 @@
 
   function ensureFavicons() {
     var base = window.location.pathname.indexOf('/Bawnance') === 0 ? '/Bawnance' : '';
-    var faviconHref = base + '/favicon.png?v=2';
+    var faviconHref = base + '/favicon.png?v=3';
     var icon = document.querySelector('link[rel="icon"]');
     if (!icon) {
       icon = document.createElement('link');
