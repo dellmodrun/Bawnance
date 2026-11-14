@@ -13,3 +13,4 @@ stock-api-response.json
 server.log
 server-error.log
 *.download
+supabase/.temp/

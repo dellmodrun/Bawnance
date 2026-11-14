@@ -19,7 +19,7 @@ for (const route of manifest.routes) {
   html = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
   html = html.replace(/\b(href|src)="\/(?!\/)/g, `$1="${base}/`);
   if (route === '/') html = html.replace('<body>', `<body>${intro}`).replace('</body>', `${introScript}</body>`);
-  html = html.replace('</body>', `<script src="${base}/assets/bawnance-ui.js?v=2"></script></body>`);
+  html = html.replace('</body>', `<script src="${base}/assets/bawnance-ui.js?v=3"></script></body>`);
   await writeFile(file, html, 'utf8');
 }
 

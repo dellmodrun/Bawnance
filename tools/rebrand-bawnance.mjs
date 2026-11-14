@@ -29,8 +29,8 @@ async function visit(directory) {
           .replace(/<span class="border border-border bg-card px-3 py-1\.5">Treasury[\s\S]*?<\/span><\/span>/g, '')
           .replace(/<link rel="apple-touch-icon" href="\/favicon\.png(?:\?[^\"]*)?"\/>/g, '')
           .replace(/<link rel="icon" href="\/favicon\.png(?:\?[^\"]*)?" type="image\/png"\/>/, '<link rel="icon" href="/favicon.png?v=3" type="image/png"/><link rel="apple-touch-icon" href="/favicon.png?v=3"/>')
-          .replace('</head>', '<script src="/assets/bawnance-ui.js?v=2" defer></script></head>');
-        after = after.replace(/(?:<script src="\/assets\/bawnance-ui\.js(?:\?v=\d+)?" defer><\/script>){2,}/g, '<script src="/assets/bawnance-ui.js?v=2" defer></script>');
+          .replace('</head>', '<script src="/assets/bawnance-ui.js?v=3" defer></script></head>');
+        after = after.replace(/(?:<script src="\/assets\/bawnance-ui\.js(?:\?v=\d+)?" defer><\/script>){2,}/g, '<script src="/assets/bawnance-ui.js?v=3" defer></script>');
       }
       if (entry.name.startsWith('how-it-works-') && path.extname(entry.name).toLowerCase() === '.js') {
         after = after.replace(/,\(0,p\.jsxs\)\(`span`,\{className:`border border-border bg-card px-3 py-1\.5`,children:\[`Treasury `,\(0,p\.jsx\)\(`span`,\{className:`text-accent`,children:i\(s\)\}\)\]\}\)/g, '');

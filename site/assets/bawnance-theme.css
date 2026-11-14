@@ -257,6 +257,10 @@ main .fixed.z-\[100\] button {
   white-space: nowrap;
 }
 
+.bawnance-ca-box[data-copyable="true"] {
+  cursor: pointer;
+}
+
 .bawnance-ca-label {
   align-self: stretch;
   display: inline-flex;
